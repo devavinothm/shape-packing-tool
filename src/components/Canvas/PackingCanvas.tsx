@@ -1,11 +1,13 @@
 import {
   Grid,
+  HelpCircle,
   Maximize2,
   Minus,
   Plus,
   RotateCcw,
-  Tag,
   SquareDashed,
+  Tag,
+  X,
 } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { isInsideContainer } from '../../core/collision';
@@ -60,9 +62,11 @@ export const PackingCanvas: React.FC = () => {
     overlays,
     toggleOverlay,
     getValidation,
+    toastMessage,
   } = usePackingStore();
 
   const [dragState, setDragState] = useState<DragState | null>(null);
+  const [showHelp, setShowHelp] = useState(false);
 
   // Template lookup map
   const templateMap = new Map();
@@ -101,12 +105,10 @@ export const PackingCanvas: React.FC = () => {
   // Global Keyboard Shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Ignore if typing in input
       if (['INPUT', 'SELECT', 'TEXTAREA'].includes((e.target as HTMLElement).tagName)) {
         return;
       }
 
-      // Delete / Backspace
       if (e.key === 'Delete' || e.key === 'Backspace') {
         if (selectedIds.length > 0) {
           e.preventDefault();
@@ -114,7 +116,6 @@ export const PackingCanvas: React.FC = () => {
         }
       }
 
-      // Undo / Redo
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'z') {
         e.preventDefault();
         if (e.shiftKey) {
@@ -124,7 +125,6 @@ export const PackingCanvas: React.FC = () => {
         }
       }
 
-      // Nudge with arrow keys
       const step = e.shiftKey ? 10 : 1;
       if (e.key === 'ArrowLeft') {
         e.preventDefault();
@@ -148,7 +148,7 @@ export const PackingCanvas: React.FC = () => {
   // Wheel Zoom
   const handleWheel = (e: React.WheelEvent) => {
     e.preventDefault();
-    const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
+    const zoomFactor = e.deltaY < 0 ? 1.08 : 0.92;
     const newZoom = Math.max(0.1, Math.min(5, zoom * zoomFactor));
 
     if (containerRef.current) {
@@ -166,7 +166,7 @@ export const PackingCanvas: React.FC = () => {
     }
   };
 
-  // Handle Drag & Drop of Shape Templates onto the Canvas
+  // Drag & drop shape onto canvas
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'copy';
@@ -209,10 +209,10 @@ export const PackingCanvas: React.FC = () => {
     }
   };
 
-  // Shape Drag Start
+  // Shape Pointer Down
   const handleShapePointerDown = (shape: PlacedShape, e: React.PointerEvent) => {
     e.stopPropagation();
-    if (e.button !== 0) return; // only left click
+    if (e.button !== 0) return;
 
     toggleSelectShape(shape.id, e.shiftKey);
 
@@ -248,13 +248,12 @@ export const PackingCanvas: React.FC = () => {
     });
   };
 
-  // Background Pointer Down for Pan or Deselect
+  // Background pointer down for Pan or Deselect
   const handleBgPointerDown = (e: React.PointerEvent) => {
     if (e.target === svgRef.current || (e.target as HTMLElement).id === 'container-group') {
       setSelectedIds([]);
     }
 
-    // Middle click or Alt/Space key triggers Pan
     if (e.button === 1 || e.altKey || e.button === 0) {
       setDragState({
         type: 'pan',
@@ -269,7 +268,7 @@ export const PackingCanvas: React.FC = () => {
     }
   };
 
-  // Pointer Move (Drag update)
+  // Pointer Move
   const handlePointerMove = (e: React.PointerEvent) => {
     if (!dragState) return;
 
@@ -297,11 +296,9 @@ export const PackingCanvas: React.FC = () => {
         };
         const geo = getGeometry(template, candidate);
 
-        // Check container bounds
         if (!isInsideContainer(geo, container)) {
           isValid = false;
         } else {
-          // Check collision against all other shapes via spatial grid
           const grid = new SpatialGrid(64);
           for (const s of placedShapes) {
             if (s.id !== dragState.shapeId) {
@@ -322,7 +319,6 @@ export const PackingCanvas: React.FC = () => {
         currentValid: isValid,
       });
 
-      // Update shape position visually
       updatePlacedShape(dragState.shapeId, { x: nextX, y: nextY });
     } else if (dragState.type === 'resize' && dragState.handleId) {
       const h = dragState.handleId;
@@ -350,12 +346,11 @@ export const PackingCanvas: React.FC = () => {
     }
   };
 
-  // Pointer Up (Drop / End Drag)
+  // Pointer Up
   const handlePointerUp = () => {
     if (!dragState) return;
 
     if (dragState.type === 'shape' && dragState.shapeId && dragState.initialShape) {
-      // If drop position is invalid, snap back to initial position!
       if (!dragState.currentValid) {
         updatePlacedShape(dragState.shapeId, {
           x: dragState.initialShape.x,
@@ -367,13 +362,16 @@ export const PackingCanvas: React.FC = () => {
     setDragState(null);
   };
 
+  const isMac = typeof navigator !== 'undefined' && /Mac|iPod|iPhone|iPad/.test(navigator.userAgent);
+  const cmdKey = isMac ? '⌘' : 'Ctrl+';
+
   return (
     <div
       ref={containerRef}
       onWheel={handleWheel}
       onDragOver={handleDragOver}
       onDrop={handleDrop}
-      className="flex-1 h-full relative overflow-hidden bg-slate-950 select-none cursor-default"
+      className="flex-1 h-full relative overflow-hidden canvas-dot-grid select-none cursor-default"
     >
       {/* SVG Interactive Canvas */}
       <svg
@@ -413,89 +411,154 @@ export const PackingCanvas: React.FC = () => {
         </g>
       </svg>
 
-      {/* Floating Toolbar: Zoom, Snap, Overlays */}
-      <div className="absolute bottom-4 right-4 flex items-center gap-1.5 bg-slate-900/90 border border-slate-700/80 backdrop-blur rounded-lg p-1 text-slate-300 shadow-xl z-10">
+      {/* Friendly empty state per Section 5 */}
+      {placedShapes.length === 0 && (
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
+          <div className="bg-[#FFFFFF]/90 dark:bg-[#1E1D1B]/90 border border-[#E7E5E0] dark:border-[#2D2C28] rounded-[8px] px-4 py-2.5 shadow-sm text-center">
+            <p className="text-[13px] text-[#6B6860] dark:text-[#9E9B93] m-0">
+              Nothing here yet. Try <span className="text-[#1C1B19] dark:text-[#EDEBE8] font-medium">Random fill</span> or drag a shape in.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Help popover toggle (?) per Section 5 */}
+      <div className="absolute top-3 left-3 z-10">
         <button
-          onClick={() => setZoom(zoom * 1.2)}
-          title="Zoom in"
-          className="p-1.5 rounded hover:bg-slate-800 hover:text-white transition-colors"
+          onClick={() => setShowHelp(!showHelp)}
+          title="Canvas shortcuts & help"
+          className="p-1.5 rounded-[6px] bg-[#FFFFFF] dark:bg-[#1E1D1B] border border-[#E7E5E0] dark:border-[#2D2C28] text-[#6B6860] dark:text-[#9E9B93] hover:text-[#1C1B19] dark:hover:text-[#EDEBE8] shadow-xs transition-colors"
         >
-          <Plus size={15} />
+          <HelpCircle size={15} strokeWidth={1.5} />
         </button>
-        <span className="text-xs font-mono font-medium px-1.5 min-w-[48px] text-center text-slate-300">
+
+        {showHelp && (
+          <div className="absolute left-0 top-full mt-1.5 w-64 bg-[#FFFFFF] dark:bg-[#1E1D1B] border border-[#E7E5E0] dark:border-[#2D2C28] rounded-[8px] p-3 shadow-lg text-[12px] text-[#6B6860] dark:text-[#9E9B93] space-y-2 z-30">
+            <div className="flex items-center justify-between text-[#1C1B19] dark:text-[#EDEBE8] font-medium border-b border-[#E7E5E0] dark:border-[#2D2C28] pb-1.5">
+              <span>Shortcuts & tips</span>
+              <button onClick={() => setShowHelp(false)} className="text-[#9E9B93] hover:text-[#1C1B19]">
+                <X size={13} strokeWidth={1.5} />
+              </button>
+            </div>
+            <div className="space-y-1 leading-snug">
+              <div className="flex justify-between">
+                <span>Move shape</span>
+                <span className="font-mono text-[#1C1B19] dark:text-[#EDEBE8]">Drag</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Nudge position</span>
+                <span className="font-mono text-[#1C1B19] dark:text-[#EDEBE8]">Arrow keys</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Nudge 10 units</span>
+                <span className="font-mono text-[#1C1B19] dark:text-[#EDEBE8]">Shift + Arrows</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Remove selected</span>
+                <span className="font-mono text-[#1C1B19] dark:text-[#EDEBE8]">Delete</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Undo / Redo</span>
+                <span className="font-mono text-[#1C1B19] dark:text-[#EDEBE8]">{cmdKey}Z / {cmdKey}⇧Z</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Zoom canvas</span>
+                <span className="font-mono text-[#1C1B19] dark:text-[#EDEBE8]">Scroll wheel</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Pan canvas</span>
+                <span className="font-mono text-[#1C1B19] dark:text-[#EDEBE8]">Drag background</span>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Floating Toolbar: Zoom, Snap, Overlays */}
+      <div className="absolute bottom-3 right-3 flex items-center gap-0.5 bg-[#FFFFFF] dark:bg-[#1E1D1B] border border-[#E7E5E0] dark:border-[#2D2C28] rounded-[6px] p-0.5 text-[#6B6860] dark:text-[#9E9B93] shadow-xs z-10">
+        <button
+          onClick={() => setZoom(zoom * 1.15)}
+          title="Zoom in"
+          className="p-1.5 rounded-[4px] hover:bg-[#FAFAF8] dark:hover:bg-[#282724] hover:text-[#1C1B19] dark:hover:text-[#EDEBE8] transition-colors"
+        >
+          <Plus size={14} strokeWidth={1.5} />
+        </button>
+        <span className="text-[11px] font-mono tabular-nums px-1.5 min-w-[42px] text-center text-[#1C1B19] dark:text-[#EDEBE8]">
           {Math.round(zoom * 100)}%
         </span>
         <button
-          onClick={() => setZoom(zoom / 1.2)}
+          onClick={() => setZoom(zoom / 1.15)}
           title="Zoom out"
-          className="p-1.5 rounded hover:bg-slate-800 hover:text-white transition-colors"
+          className="p-1.5 rounded-[4px] hover:bg-[#FAFAF8] dark:hover:bg-[#282724] hover:text-[#1C1B19] dark:hover:text-[#EDEBE8] transition-colors"
         >
-          <Minus size={15} />
+          <Minus size={14} strokeWidth={1.5} />
         </button>
         <button
           onClick={zoomToFit}
           title="Fit container to screen"
-          className="p-1.5 rounded hover:bg-slate-800 hover:text-white transition-colors"
+          className="p-1.5 rounded-[4px] hover:bg-[#FAFAF8] dark:hover:bg-[#282724] hover:text-[#1C1B19] dark:hover:text-[#EDEBE8] transition-colors"
         >
-          <Maximize2 size={15} />
+          <Maximize2 size={13} strokeWidth={1.5} />
         </button>
         <button
           onClick={() => {
             setZoom(1);
             setPan({ x: 40, y: 40 });
           }}
-          title="Reset zoom to 100%"
-          className="p-1.5 rounded hover:bg-slate-800 hover:text-white transition-colors"
+          title="Reset zoom (100%)"
+          className="p-1.5 rounded-[4px] hover:bg-[#FAFAF8] dark:hover:bg-[#282724] hover:text-[#1C1B19] dark:hover:text-[#EDEBE8] transition-colors"
         >
-          <RotateCcw size={15} />
+          <RotateCcw size={13} strokeWidth={1.5} />
         </button>
 
-        <div className="w-px h-4 bg-slate-700 mx-1" />
+        <div className="w-px h-3.5 bg-[#E7E5E0] dark:bg-[#2D2C28] mx-0.5" />
 
         {/* Snap to grid toggle */}
         <button
           onClick={toggleGridSnap}
-          title={gridSnap ? 'Disable Grid Snap' : 'Enable Grid Snap (10px)'}
-          className={`p-1.5 rounded transition-colors ${
+          title={gridSnap ? 'Grid snap on' : 'Grid snap off'}
+          className={`p-1.5 rounded-[4px] transition-colors ${
             gridSnap
-              ? 'bg-indigo-600/30 text-indigo-300 border border-indigo-500/50'
-              : 'hover:bg-slate-800 hover:text-white'
+              ? 'text-[#1F6F5C] dark:text-[#2B8570] bg-[#EBF3F0] dark:bg-[#1A2E28]'
+              : 'hover:bg-[#FAFAF8] dark:hover:bg-[#282724] hover:text-[#1C1B19] dark:hover:text-[#EDEBE8]'
           }`}
         >
-          <Grid size={15} />
+          <Grid size={14} strokeWidth={1.5} />
         </button>
 
         {/* Bounding box overlay toggle */}
         <button
           onClick={() => toggleOverlay('boundingBoxes')}
-          title="Toggle Bounding Boxes Overlay"
-          className={`p-1.5 rounded transition-colors ${
+          title="Toggle bounding box outlines"
+          className={`p-1.5 rounded-[4px] transition-colors ${
             overlays.boundingBoxes
-              ? 'bg-indigo-600/30 text-indigo-300 border border-indigo-500/50'
-              : 'hover:bg-slate-800 hover:text-white'
+              ? 'text-[#1F6F5C] dark:text-[#2B8570] bg-[#EBF3F0] dark:bg-[#1A2E28]'
+              : 'hover:bg-[#FAFAF8] dark:hover:bg-[#282724] hover:text-[#1C1B19] dark:hover:text-[#EDEBE8]'
           }`}
         >
-          <SquareDashed size={15} />
+          <SquareDashed size={14} strokeWidth={1.5} />
         </button>
 
         {/* IDs overlay toggle */}
         <button
           onClick={() => toggleOverlay('ids')}
-          title="Toggle Shape IDs Overlay"
-          className={`p-1.5 rounded transition-colors ${
+          title="Toggle shape ID labels"
+          className={`p-1.5 rounded-[4px] transition-colors ${
             overlays.ids
-              ? 'bg-indigo-600/30 text-indigo-300 border border-indigo-500/50'
-              : 'hover:bg-slate-800 hover:text-white'
+              ? 'text-[#1F6F5C] dark:text-[#2B8570] bg-[#EBF3F0] dark:bg-[#1A2E28]'
+              : 'hover:bg-[#FAFAF8] dark:hover:bg-[#282724] hover:text-[#1C1B19] dark:hover:text-[#EDEBE8]'
           }`}
         >
-          <Tag size={15} />
+          <Tag size={14} strokeWidth={1.5} />
         </button>
       </div>
 
-      {/* Helper Legend / Hint */}
-      <div className="absolute top-4 left-4 bg-slate-900/80 border border-slate-700/60 backdrop-blur rounded px-2.5 py-1 text-[11px] text-slate-400 pointer-events-none">
-        Drag shape to move • Red = collision / out of bounds • Del = remove • Wheel = zoom
-      </div>
+      {/* Subtle Toast Notification per Section 7 */}
+      {toastMessage && (
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-[#1C1B19] dark:bg-[#EDEBE8] text-[#FAFAF8] dark:text-[#1C1B19] text-[12px] font-medium py-1.5 px-3.5 rounded-[6px] shadow-lg animate-toast z-30 pointer-events-none">
+          {toastMessage}
+        </div>
+      )}
     </div>
   );
 };

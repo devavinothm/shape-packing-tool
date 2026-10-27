@@ -1,4 +1,4 @@
-import { Copy, GripVertical, Plus, Trash2 } from 'lucide-react';
+import { ChevronDown, ChevronUp, Copy, GripVertical, Plus, Trash2 } from 'lucide-react';
 import React, { useState } from 'react';
 import { getTemplateDimensions } from '../../core/geometry';
 import type { ShapeTemplate } from '../../core/types';
@@ -31,97 +31,97 @@ export const TemplateCard: React.FC<Props> = ({ template }) => {
 
   return (
     <div
-      className={`rounded-lg border transition-all ${
+      className={`rounded-[8px] border transition-all duration-150 ${
         template.enabled
-          ? 'bg-slate-800/80 border-slate-700/80 shadow-sm'
-          : 'bg-slate-900/40 border-slate-800/60 opacity-60'
+          ? 'bg-[#FFFFFF] dark:bg-[#1E1D1B] border-[#E7E5E0] dark:border-[#2D2C28]'
+          : 'bg-[#FAFAF8] dark:bg-[#151413] border-[#E7E5E0] dark:border-[#2D2C28] opacity-50'
       }`}
     >
-      {/* Top Header */}
-      <div className="p-2.5 flex items-center justify-between gap-2">
+      {/* Card Header */}
+      <div className="p-2 flex items-center justify-between gap-1.5">
         {/* Drag handle to drop onto canvas */}
         <div
           draggable
           onDragStart={handleDragStart}
-          title="Drag into container canvas to place instance"
-          className="cursor-grab active:cursor-grabbing p-1 text-slate-500 hover:text-slate-300 hover:bg-slate-700/50 rounded"
+          title="Drag into container canvas"
+          className="cursor-grab active:cursor-grabbing p-1 text-[#9E9B93] dark:text-[#6B6860] hover:text-[#1C1B19] dark:hover:text-[#EDEBE8] rounded-[4px]"
         >
-          <GripVertical size={14} />
+          <GripVertical size={13} strokeWidth={1.5} />
         </div>
 
-        {/* Color picker & shape name */}
+        {/* Color badge & shape info */}
         <div className="flex items-center gap-2 flex-1 min-w-0">
           <input
             type="color"
             value={template.color}
             onChange={(e) => updateTemplate(template.id, { color: e.target.value })}
-            className="w-5 h-5 rounded cursor-pointer border-0 bg-transparent p-0"
-            title="Change shape color"
+            className="w-3.5 h-3.5 rounded-full cursor-pointer border-0 bg-transparent p-0 shrink-0"
+            title="Change color"
           />
-          <div className="truncate">
-            <span className="text-xs font-semibold text-slate-200 capitalize">
+          <div className="truncate flex-1">
+            <div className="text-[12px] font-medium text-[#1C1B19] dark:text-[#EDEBE8] leading-tight capitalize">
               {template.name || template.type}
-            </span>
-            <div className="text-[10px] text-slate-400">
-              {template.type === 'square' && `size: ${template.params.size || 50} ${unit}`}
+            </div>
+            <div className="text-[11px] font-mono text-[#6B6860] dark:text-[#9E9B93] tabular-nums leading-tight">
+              {template.type === 'square' && `${template.params.size || 50}×${template.params.size || 50} ${unit}`}
               {template.type === 'rectangle' &&
-                `${template.params.width || 80} × ${template.params.height || 40} ${unit}`}
-              {template.type === 'circle' && `r: ${template.params.radius || 25} ${unit}`}
+                `${template.params.width || 80}×${template.params.height || 40} ${unit}`}
+              {template.type === 'circle' && `r ${template.params.radius || 25} ${unit}`}
               {template.type === 'triangle' &&
-                `b: ${template.params.base || 60}, h: ${template.params.height || 50} ${unit}`}
+                `b ${template.params.base || 60}, h ${template.params.height || 50} ${unit}`}
             </div>
           </div>
         </div>
 
-        {/* Action icons */}
-        <div className="flex items-center gap-1">
+        {/* Actions */}
+        <div className="flex items-center gap-0.5">
           <button
             onClick={handleAddDirectly}
             title="Place shape into center of container"
-            className="p-1 rounded text-slate-400 hover:text-indigo-300 hover:bg-slate-700 transition-colors"
+            className="p-1 rounded-[4px] text-[#6B6860] dark:text-[#9E9B93] hover:text-[#1C1B19] dark:hover:text-[#EDEBE8] hover:bg-[#F3F2EE] dark:hover:bg-[#282724] transition-colors"
           >
-            <Plus size={14} />
+            <Plus size={13} strokeWidth={1.5} />
+          </button>
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            title={isExpanded ? 'Hide parameters' : 'Edit parameters'}
+            className="p-1 rounded-[4px] text-[#6B6860] dark:text-[#9E9B93] hover:text-[#1C1B19] dark:hover:text-[#EDEBE8] hover:bg-[#F3F2EE] dark:hover:bg-[#282724] transition-colors"
+          >
+            {isExpanded ? <ChevronUp size={13} strokeWidth={1.5} /> : <ChevronDown size={13} strokeWidth={1.5} />}
           </button>
           <button
             onClick={() => duplicateTemplate(template.id)}
             title="Duplicate template"
-            className="p-1 rounded text-slate-400 hover:text-slate-200 hover:bg-slate-700 transition-colors"
+            className="p-1 rounded-[4px] text-[#6B6860] dark:text-[#9E9B93] hover:text-[#1C1B19] dark:hover:text-[#EDEBE8] hover:bg-[#F3F2EE] dark:hover:bg-[#282724] transition-colors"
           >
-            <Copy size={13} />
+            <Copy size={12} strokeWidth={1.5} />
           </button>
           <button
             onClick={() => deleteTemplate(template.id)}
             title="Delete template"
-            className="p-1 rounded text-slate-400 hover:text-rose-400 hover:bg-slate-700 transition-colors"
+            className="p-1 rounded-[4px] text-[#6B6860] dark:text-[#9E9B93] hover:text-[#C2453A] hover:bg-[#F3F2EE] dark:hover:bg-[#282724] transition-colors"
           >
-            <Trash2 size={13} />
+            <Trash2 size={12} strokeWidth={1.5} />
           </button>
           <input
             type="checkbox"
             checked={template.enabled}
             onChange={(e) => updateTemplate(template.id, { enabled: e.target.checked })}
-            className="ml-1 w-3.5 h-3.5 accent-indigo-500 rounded cursor-pointer"
-            title="Enable/disable template in auto-fill"
+            className="ml-1 w-3 h-3 accent-[#1F6F5C] dark:accent-[#2B8570] rounded cursor-pointer"
+            title="Enable/disable shape in fill operations"
           />
         </div>
       </div>
 
-      {/* Mini SVG Preview & Toggle details */}
-      <div className="px-3 pb-2.5">
-        <div
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="flex items-center justify-between text-[11px] text-slate-400 cursor-pointer hover:text-slate-300 select-none"
-        >
-          <span>{isExpanded ? 'Hide parameters' : 'Edit parameters'}</span>
-          <span className="text-[10px]">{isExpanded ? '▲' : '▼'}</span>
-        </div>
-
-        {isExpanded && (
-          <div className="mt-2 pt-2 border-t border-slate-700/60 space-y-2.5">
-            {/* Dynamic Parameter inputs */}
-            {template.type === 'square' && (
-              <div>
-                <label className="block text-[10px] text-slate-400 mb-0.5">Size ({unit})</label>
+      {/* Expanded Parameters */}
+      {isExpanded && (
+        <div className="px-2.5 pb-2.5 pt-1 border-t border-[#E7E5E0] dark:border-[#2D2C28] space-y-2 mt-0.5">
+          {template.type === 'square' && (
+            <div>
+              <label className="block text-[11px] text-[#6B6860] dark:text-[#9E9B93] mb-0.5">
+                Size
+              </label>
+              <div className="relative flex items-center">
                 <input
                   type="number"
                   min={1}
@@ -132,15 +132,22 @@ export const TemplateCard: React.FC<Props> = ({ template }) => {
                       params: { ...template.params, size: Number(e.target.value) },
                     })
                   }
-                  className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-slate-200 font-mono"
+                  className="w-full bg-[#FFFFFF] dark:bg-[#1E1D1B] border border-[#E7E5E0] dark:border-[#2D2C28] rounded-[6px] pl-2 pr-6 py-0.5 text-[12px] text-[#1C1B19] dark:text-[#EDEBE8] font-mono tabular-nums focus:outline-none focus:border-[#1F6F5C] dark:focus:border-[#2B8570]"
                 />
+                <span className="absolute right-2 text-[10px] text-[#9E9B93] dark:text-[#6B6860] pointer-events-none">
+                  {unit}
+                </span>
               </div>
-            )}
+            </div>
+          )}
 
-            {template.type === 'rectangle' && (
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className="block text-[10px] text-slate-400 mb-0.5">Width ({unit})</label>
+          {template.type === 'rectangle' && (
+            <div className="grid grid-cols-2 gap-1.5">
+              <div>
+                <label className="block text-[11px] text-[#6B6860] dark:text-[#9E9B93] mb-0.5">
+                  Width
+                </label>
+                <div className="relative flex items-center">
                   <input
                     type="number"
                     min={1}
@@ -151,11 +158,18 @@ export const TemplateCard: React.FC<Props> = ({ template }) => {
                         params: { ...template.params, width: Number(e.target.value) },
                       })
                     }
-                    className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-slate-200 font-mono"
+                    className="w-full bg-[#FFFFFF] dark:bg-[#1E1D1B] border border-[#E7E5E0] dark:border-[#2D2C28] rounded-[6px] pl-2 pr-6 py-0.5 text-[12px] text-[#1C1B19] dark:text-[#EDEBE8] font-mono tabular-nums focus:outline-none focus:border-[#1F6F5C] dark:focus:border-[#2B8570]"
                   />
+                  <span className="absolute right-2 text-[10px] text-[#9E9B93] dark:text-[#6B6860] pointer-events-none">
+                    {unit}
+                  </span>
                 </div>
-                <div>
-                  <label className="block text-[10px] text-slate-400 mb-0.5">Height ({unit})</label>
+              </div>
+              <div>
+                <label className="block text-[11px] text-[#6B6860] dark:text-[#9E9B93] mb-0.5">
+                  Height
+                </label>
+                <div className="relative flex items-center">
                   <input
                     type="number"
                     min={1}
@@ -166,15 +180,22 @@ export const TemplateCard: React.FC<Props> = ({ template }) => {
                         params: { ...template.params, height: Number(e.target.value) },
                       })
                     }
-                    className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-slate-200 font-mono"
+                    className="w-full bg-[#FFFFFF] dark:bg-[#1E1D1B] border border-[#E7E5E0] dark:border-[#2D2C28] rounded-[6px] pl-2 pr-6 py-0.5 text-[12px] text-[#1C1B19] dark:text-[#EDEBE8] font-mono tabular-nums focus:outline-none focus:border-[#1F6F5C] dark:focus:border-[#2B8570]"
                   />
+                  <span className="absolute right-2 text-[10px] text-[#9E9B93] dark:text-[#6B6860] pointer-events-none">
+                    {unit}
+                  </span>
                 </div>
               </div>
-            )}
+            </div>
+          )}
 
-            {template.type === 'circle' && (
-              <div>
-                <label className="block text-[10px] text-slate-400 mb-0.5">Radius ({unit})</label>
+          {template.type === 'circle' && (
+            <div>
+              <label className="block text-[11px] text-[#6B6860] dark:text-[#9E9B93] mb-0.5">
+                Radius
+              </label>
+              <div className="relative flex items-center">
                 <input
                   type="number"
                   min={1}
@@ -185,15 +206,22 @@ export const TemplateCard: React.FC<Props> = ({ template }) => {
                       params: { ...template.params, radius: Number(e.target.value) },
                     })
                   }
-                  className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-slate-200 font-mono"
+                  className="w-full bg-[#FFFFFF] dark:bg-[#1E1D1B] border border-[#E7E5E0] dark:border-[#2D2C28] rounded-[6px] pl-2 pr-6 py-0.5 text-[12px] text-[#1C1B19] dark:text-[#EDEBE8] font-mono tabular-nums focus:outline-none focus:border-[#1F6F5C] dark:focus:border-[#2B8570]"
                 />
+                <span className="absolute right-2 text-[10px] text-[#9E9B93] dark:text-[#6B6860] pointer-events-none">
+                  {unit}
+                </span>
               </div>
-            )}
+            </div>
+          )}
 
-            {template.type === 'triangle' && (
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className="block text-[10px] text-slate-400 mb-0.5">Base ({unit})</label>
+          {template.type === 'triangle' && (
+            <div className="grid grid-cols-2 gap-1.5">
+              <div>
+                <label className="block text-[11px] text-[#6B6860] dark:text-[#9E9B93] mb-0.5">
+                  Base
+                </label>
+                <div className="relative flex items-center">
                   <input
                     type="number"
                     min={1}
@@ -204,11 +232,18 @@ export const TemplateCard: React.FC<Props> = ({ template }) => {
                         params: { ...template.params, base: Number(e.target.value) },
                       })
                     }
-                    className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-slate-200 font-mono"
+                    className="w-full bg-[#FFFFFF] dark:bg-[#1E1D1B] border border-[#E7E5E0] dark:border-[#2D2C28] rounded-[6px] pl-2 pr-6 py-0.5 text-[12px] text-[#1C1B19] dark:text-[#EDEBE8] font-mono tabular-nums focus:outline-none focus:border-[#1F6F5C] dark:focus:border-[#2B8570]"
                   />
+                  <span className="absolute right-2 text-[10px] text-[#9E9B93] dark:text-[#6B6860] pointer-events-none">
+                    {unit}
+                  </span>
                 </div>
-                <div>
-                  <label className="block text-[10px] text-slate-400 mb-0.5">Height ({unit})</label>
+              </div>
+              <div>
+                <label className="block text-[11px] text-[#6B6860] dark:text-[#9E9B93] mb-0.5">
+                  Height
+                </label>
+                <div className="relative flex items-center">
                   <input
                     type="number"
                     min={1}
@@ -219,33 +254,36 @@ export const TemplateCard: React.FC<Props> = ({ template }) => {
                         params: { ...template.params, height: Number(e.target.value) },
                       })
                     }
-                    className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-slate-200 font-mono"
+                    className="w-full bg-[#FFFFFF] dark:bg-[#1E1D1B] border border-[#E7E5E0] dark:border-[#2D2C28] rounded-[6px] pl-2 pr-6 py-0.5 text-[12px] text-[#1C1B19] dark:text-[#EDEBE8] font-mono tabular-nums focus:outline-none focus:border-[#1F6F5C] dark:focus:border-[#2B8570]"
                   />
+                  <span className="absolute right-2 text-[10px] text-[#9E9B93] dark:text-[#6B6860] pointer-events-none">
+                    {unit}
+                  </span>
                 </div>
               </div>
-            )}
-
-            {/* Random Fill Weight Slider */}
-            <div>
-              <div className="flex justify-between text-[10px] text-slate-400 mb-1">
-                <span>Pick Probability Weight</span>
-                <span className="font-mono text-slate-300">{template.weight ?? 1}x</span>
-              </div>
-              <input
-                type="range"
-                min={0.1}
-                max={5}
-                step={0.1}
-                value={template.weight ?? 1}
-                onChange={(e) =>
-                  updateTemplate(template.id, { weight: parseFloat(e.target.value) })
-                }
-                className="w-full accent-indigo-500 h-1 bg-slate-700 rounded-lg cursor-pointer"
-              />
             </div>
+          )}
+
+          {/* Random Fill Weight Slider */}
+          <div className="pt-1">
+            <div className="flex justify-between text-[11px] text-[#6B6860] dark:text-[#9E9B93] mb-0.5">
+              <span>Pick weight</span>
+              <span className="font-mono tabular-nums text-[#1C1B19] dark:text-[#EDEBE8]">{template.weight ?? 1}×</span>
+            </div>
+            <input
+              type="range"
+              min={0.1}
+              max={5}
+              step={0.1}
+              value={template.weight ?? 1}
+              onChange={(e) =>
+                updateTemplate(template.id, { weight: parseFloat(e.target.value) })
+              }
+              className="w-full accent-[#1F6F5C] dark:accent-[#2B8570] h-1 bg-[#E7E5E0] dark:bg-[#2D2C28] rounded cursor-pointer"
+            />
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
