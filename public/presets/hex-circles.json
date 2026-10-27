@@ -1,0 +1,46 @@
+{
+  "version": "1.0",
+  "timestamp": "2026-10-27T04:45:00.000Z",
+  "container": {
+    "width": 600,
+    "height": 400
+  },
+  "templates": [
+    {
+      "id": "tpl-circ",
+      "name": "Circle",
+      "type": "circle",
+      "params": {
+        "radius": 25
+      },
+      "color": "#8b5cf6",
+      "enabled": true,
+      "weight": 1
+    }
+  ],
+  "placedShapes": [
+    { "id": "hex-1", "templateId": "tpl-circ", "x": 0, "y": 0, "rotation": 0 },
+    { "id": "hex-2", "templateId": "tpl-circ", "x": 50, "y": 0, "rotation": 0 },
+    { "id": "hex-3", "templateId": "tpl-circ", "x": 100, "y": 0, "rotation": 0 },
+    { "id": "hex-4", "templateId": "tpl-circ", "x": 150, "y": 0, "rotation": 0 },
+    { "id": "hex-5", "templateId": "tpl-circ", "x": 200, "y": 0, "rotation": 0 },
+    { "id": "hex-6", "templateId": "tpl-circ", "x": 250, "y": 0, "rotation": 0 },
+    { "id": "hex-7", "templateId": "tpl-circ", "x": 300, "y": 0, "rotation": 0 },
+    { "id": "hex-8", "templateId": "tpl-circ", "x": 350, "y": 0, "rotation": 0 },
+    { "id": "hex-9", "templateId": "tpl-circ", "x": 400, "y": 0, "rotation": 0 },
+    { "id": "hex-10", "templateId": "tpl-circ", "x": 450, "y": 0, "rotation": 0 },
+    { "id": "hex-11", "templateId": "tpl-circ", "x": 500, "y": 0, "rotation": 0 },
+    { "id": "hex-12", "templateId": "tpl-circ", "x": 550, "y": 0, "rotation": 0 },
+    { "id": "hex-13", "templateId": "tpl-circ", "x": 25, "y": 43.3, "rotation": 0 },
+    { "id": "hex-14", "templateId": "tpl-circ", "x": 75, "y": 43.3, "rotation": 0 },
+    { "id": "hex-15", "templateId": "tpl-circ", "x": 125, "y": 43.3, "rotation": 0 },
+    { "id": "hex-16", "templateId": "tpl-circ", "x": 175, "y": 43.3, "rotation": 0 },
+    { "id": "hex-17", "templateId": "tpl-circ", "x": 225, "y": 43.3, "rotation": 0 },
+    { "id": "hex-18", "templateId": "tpl-circ", "x": 275, "y": 43.3, "rotation": 0 },
+    { "id": "hex-19", "templateId": "tpl-circ", "x": 325, "y": 43.3, "rotation": 0 },
+    { "id": "hex-20", "templateId": "tpl-circ", "x": 375, "y": 43.3, "rotation": 0 },
+    { "id": "hex-21", "templateId": "tpl-circ", "x": 425, "y": 43.3, "rotation": 0 },
+    { "id": "hex-22", "templateId": "tpl-circ", "x": 475, "y": 43.3, "rotation": 0 },
+    { "id": "hex-23", "templateId": "tpl-circ", "x": 525, "y": 43.3, "rotation": 0 }
+  ]
+}

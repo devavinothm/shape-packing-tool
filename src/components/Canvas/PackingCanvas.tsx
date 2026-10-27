@@ -76,7 +76,7 @@ export const PackingCanvas: React.FC = () => {
   ]);
 
   // Center/Fit Container to screen
-  const zoomToFit = () => {
+  const zoomToFit = React.useCallback(() => {
     if (!containerRef.current) return;
     const { clientWidth, clientHeight } = containerRef.current;
     const padding = 80;
@@ -91,12 +91,12 @@ export const PackingCanvas: React.FC = () => {
 
     setZoom(fitZoom);
     setPan(fitPan);
-  };
+  }, [container.width, container.height, setZoom, setPan]);
 
   // Initial fit on mount
   useEffect(() => {
     zoomToFit();
-  }, []);
+  }, [zoomToFit]);
 
   // Global Keyboard Shortcuts
   useEffect(() => {

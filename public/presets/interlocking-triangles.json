@@ -1,0 +1,43 @@
+{
+  "version": "1.0",
+  "timestamp": "2026-10-27T04:45:00.000Z",
+  "container": {
+    "width": 600,
+    "height": 400
+  },
+  "templates": [
+    {
+      "id": "tpl-tri",
+      "name": "Triangle",
+      "type": "triangle",
+      "params": {
+        "base": 60,
+        "height": 50
+      },
+      "color": "#f59e0b",
+      "enabled": true,
+      "weight": 1
+    }
+  ],
+  "placedShapes": [
+    { "id": "tri-1", "templateId": "tpl-tri", "x": 0, "y": 0, "rotation": 0 },
+    { "id": "tri-2", "templateId": "tpl-tri", "x": 30, "y": 0, "rotation": 180 },
+    { "id": "tri-3", "templateId": "tpl-tri", "x": 60, "y": 0, "rotation": 0 },
+    { "id": "tri-4", "templateId": "tpl-tri", "x": 90, "y": 0, "rotation": 180 },
+    { "id": "tri-5", "templateId": "tpl-tri", "x": 120, "y": 0, "rotation": 0 },
+    { "id": "tri-6", "templateId": "tpl-tri", "x": 150, "y": 0, "rotation": 180 },
+    { "id": "tri-7", "templateId": "tpl-tri", "x": 180, "y": 0, "rotation": 0 },
+    { "id": "tri-8", "templateId": "tpl-tri", "x": 210, "y": 0, "rotation": 180 },
+    { "id": "tri-9", "templateId": "tpl-tri", "x": 240, "y": 0, "rotation": 0 },
+    { "id": "tri-10", "templateId": "tpl-tri", "x": 270, "y": 0, "rotation": 180 },
+    { "id": "tri-11", "templateId": "tpl-tri", "x": 300, "y": 0, "rotation": 0 },
+    { "id": "tri-12", "templateId": "tpl-tri", "x": 330, "y": 0, "rotation": 180 },
+    { "id": "tri-13", "templateId": "tpl-tri", "x": 360, "y": 0, "rotation": 0 },
+    { "id": "tri-14", "templateId": "tpl-tri", "x": 390, "y": 0, "rotation": 180 },
+    { "id": "tri-15", "templateId": "tpl-tri", "x": 420, "y": 0, "rotation": 0 },
+    { "id": "tri-16", "templateId": "tpl-tri", "x": 450, "y": 0, "rotation": 180 },
+    { "id": "tri-17", "templateId": "tpl-tri", "x": 480, "y": 0, "rotation": 0 },
+    { "id": "tri-18", "templateId": "tpl-tri", "x": 510, "y": 0, "rotation": 180 },
+    { "id": "tri-19", "templateId": "tpl-tri", "x": 540, "y": 0, "rotation": 0 }
+  ]
+}
