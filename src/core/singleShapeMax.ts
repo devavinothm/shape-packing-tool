@@ -1,5 +1,5 @@
 import { isInsideContainer } from './collision';
-import { getGeometry, getTemplateDimensions } from './geometry';
+import { getGeometry } from './geometry';
 import type { Container, PlacedShape, ShapeTemplate } from './types';
 import { validateLayout } from './validate';
 
@@ -16,8 +16,6 @@ export function computeSingleShapeMax(
   container: Container,
   template: ShapeTemplate
 ): StrategyResult {
-  const { width: W, height: H } = container;
-
   switch (template.type) {
     case 'square':
       return computeSquareMax(container, template);

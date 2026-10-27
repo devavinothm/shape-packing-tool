@@ -477,7 +477,7 @@ export const usePackingStore = create<PackingState>((set, get) => ({
         container: state.container,
         templates: state.templates,
         existingShapes: state.placedShapes,
-        options: state.rfSettings,
+        options: state.rfSettings as unknown as Record<string, unknown>,
       });
 
       // Animate progressive batch placement
