@@ -1,10 +1,98 @@
 @import "tailwindcss";
 
+:root {
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+
+  /* Light Theme (Default) */
+  --bg-page: #FAFAF8;
+  --bg-panel: #FFFFFF;
+  --bg-canvas: #F3F2EE;
+  --border-hairline: #E7E5E0;
+  --border-focus: #1F6F5C;
+  --text-primary: #1C1B19;
+  --text-secondary: #6B6860;
+  --text-tertiary: #9E9B93;
+
+  /* Accent: Ink Green / Deep Teal */
+  --accent: #1F6F5C;
+  --accent-hover: #185849;
+  --accent-light: #EBF3F0;
+  --accent-ring: rgba(31, 111, 92, 0.25);
+
+  /* Curated Muted Shapes */
+  --shape-terracotta: #D98C6A;
+  --shape-sage: #8FB39A;
+  --shape-dusty-blue: #7C9CBF;
+  --shape-mustard: #E0B65A;
+
+  /* Collision calm brick red */
+  --color-invalid: #C2453A;
+}
+
+.dark {
+  --bg-page: #151413;
+  --bg-panel: #1E1D1B;
+  --bg-canvas: #121110;
+  --border-hairline: #2D2C28;
+  --border-focus: #34927B;
+  --text-primary: #EDEBE8;
+  --text-secondary: #9E9B93;
+  --text-tertiary: #6B6860;
+
+  --accent: #2B8570;
+  --accent-hover: #34927B;
+  --accent-light: #1A2E28;
+  --accent-ring: rgba(43, 133, 112, 0.35);
+}
+
 @layer base {
+  * {
+    border-color: var(--border-hairline);
+    box-sizing: border-box;
+  }
+
   html, body, #root {
     height: 100%;
     margin: 0;
     padding: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-family: var(--font-sans);
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
+
+  .font-mono, .tabular-nums {
+    font-family: var(--font-mono);
+    font-feature-settings: 'tnum' 1;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Subtle dot grid for canvas background */
+.canvas-dot-grid {
+  background-color: var(--bg-canvas);
+  background-image: radial-gradient(rgba(28, 27, 25, 0.08) 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+
+.dark .canvas-dot-grid {
+  background-image: radial-gradient(rgba(237, 235, 232, 0.07) 1px, transparent 1px);
+}
+
+/* Subtle toast animation */
+@keyframes toastSlideUp {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 8px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.animate-toast {
+  animation: toastSlideUp 180ms ease-out forwards;
 }

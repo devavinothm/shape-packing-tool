@@ -1,4 +1,4 @@
-import { AlertTriangle, Lock, Unlock, Box } from 'lucide-react';
+import { AlertCircle, Lock, Unlock } from 'lucide-react';
 import React, { useState } from 'react';
 import { usePackingStore } from '../../state/usePackingStore';
 
@@ -51,100 +51,111 @@ export const ContainerEditor: React.FC = () => {
   };
 
   return (
-    <div className="p-4 border-b border-slate-700/60 bg-slate-800/40">
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <Box size={16} className="text-indigo-400" />
-          <h2 className="text-xs font-bold uppercase tracking-wider text-slate-300 m-0">
-            Container Box
-          </h2>
-        </div>
+    <div className="p-3.5 border-b border-[#E7E5E0] dark:border-[#2D2C28] bg-transparent">
+      {/* Title & Lock */}
+      <div className="flex items-center justify-between mb-2.5">
+        <h3 className="text-[13px] font-semibold text-[#1C1B19] dark:text-[#EDEBE8] m-0">
+          Container
+        </h3>
         <button
           onClick={toggleAspectLock}
           title={aspectLocked ? 'Unlock aspect ratio' : 'Lock aspect ratio'}
-          className={`p-1 rounded text-xs transition-colors ${
+          className={`p-1 rounded-[4px] text-[12px] transition-colors ${
             aspectLocked
-              ? 'bg-indigo-600/30 text-indigo-300 border border-indigo-500/50'
-              : 'text-slate-400 hover:bg-slate-700'
+              ? 'text-[#1F6F5C] dark:text-[#2B8570] bg-[#EBF3F0] dark:bg-[#1A2E28]'
+              : 'text-[#6B6860] dark:text-[#9E9B93] hover:text-[#1C1B19] dark:hover:text-[#EDEBE8]'
           }`}
         >
-          {aspectLocked ? <Lock size={13} /> : <Unlock size={13} />}
+          {aspectLocked ? <Lock size={13} strokeWidth={1.5} /> : <Unlock size={13} strokeWidth={1.5} />}
         </button>
       </div>
 
-      {/* Inputs */}
-      <div className="grid grid-cols-2 gap-3 mb-3">
+      {/* Width and Height Inputs with inline unit suffix */}
+      <div className="grid grid-cols-2 gap-2 mb-2.5">
         <div>
-          <label className="block text-[11px] font-medium text-slate-400 mb-1">
-            Width ({unit})
+          <label className="block text-[11px] text-[#6B6860] dark:text-[#9E9B93] mb-1">
+            Width
           </label>
-          <input
-            type="number"
-            min={10}
-            max={5000}
-            value={container.width}
-            onChange={(e) => handleWidthChange(Number(e.target.value))}
-            className="w-full bg-slate-900 border border-slate-700 rounded px-2.5 py-1.5 text-sm text-slate-200 font-mono focus:outline-none focus:border-indigo-500"
-          />
+          <div className="relative flex items-center">
+            <input
+              type="number"
+              min={10}
+              max={5000}
+              value={container.width}
+              onChange={(e) => handleWidthChange(Number(e.target.value))}
+              className="w-full bg-[#FFFFFF] dark:bg-[#1E1D1B] border border-[#E7E5E0] dark:border-[#2D2C28] rounded-[6px] pl-2.5 pr-7 py-1 text-[13px] text-[#1C1B19] dark:text-[#EDEBE8] font-mono tabular-nums focus:outline-none focus:border-[#1F6F5C] dark:focus:border-[#2B8570]"
+            />
+            <span className="absolute right-2 text-[11px] text-[#9E9B93] dark:text-[#6B6860] pointer-events-none select-none">
+              {unit}
+            </span>
+          </div>
         </div>
         <div>
-          <label className="block text-[11px] font-medium text-slate-400 mb-1">
-            Height ({unit})
+          <label className="block text-[11px] text-[#6B6860] dark:text-[#9E9B93] mb-1">
+            Height
           </label>
-          <input
-            type="number"
-            min={10}
-            max={5000}
-            value={container.height}
-            onChange={(e) => handleHeightChange(Number(e.target.value))}
-            className="w-full bg-slate-900 border border-slate-700 rounded px-2.5 py-1.5 text-sm text-slate-200 font-mono focus:outline-none focus:border-indigo-500"
-          />
+          <div className="relative flex items-center">
+            <input
+              type="number"
+              min={10}
+              max={5000}
+              value={container.height}
+              onChange={(e) => handleHeightChange(Number(e.target.value))}
+              className="w-full bg-[#FFFFFF] dark:bg-[#1E1D1B] border border-[#E7E5E0] dark:border-[#2D2C28] rounded-[6px] pl-2.5 pr-7 py-1 text-[13px] text-[#1C1B19] dark:text-[#EDEBE8] font-mono tabular-nums focus:outline-none focus:border-[#1F6F5C] dark:focus:border-[#2B8570]"
+            />
+            <span className="absolute right-2 text-[11px] text-[#9E9B93] dark:text-[#6B6860] pointer-events-none select-none">
+              {unit}
+            </span>
+          </div>
         </div>
       </div>
 
       {/* Preset dimension pills */}
-      <div className="flex flex-wrap gap-1.5">
+      <div className="flex flex-wrap gap-1">
         {[
           [800, 600],
           [1000, 700],
           [600, 400],
           [500, 500],
-        ].map(([w, h]) => (
-          <button
-            key={`${w}x${h}`}
-            onClick={() => setPreset(w, h)}
-            className={`text-[11px] px-2 py-0.5 rounded border transition-colors ${
-              container.width === w && container.height === h
-                ? 'bg-indigo-600/30 border-indigo-500 text-indigo-300'
-                : 'bg-slate-800/80 border-slate-700/80 text-slate-400 hover:text-slate-200 hover:border-slate-600'
-            }`}
-          >
-            {w}×{h}
-          </button>
-        ))}
+        ].map(([w, h]) => {
+          const isActive = container.width === w && container.height === h;
+          return (
+            <button
+              key={`${w}x${h}`}
+              onClick={() => setPreset(w, h)}
+              className={`text-[11px] font-mono px-2 py-0.5 rounded-[4px] border transition-colors ${
+                isActive
+                  ? 'bg-[#EBF3F0] dark:bg-[#1A2E28] border-[#1F6F5C] dark:border-[#2B8570] text-[#1F6F5C] dark:text-[#2B8570] font-medium'
+                  : 'bg-[#FFFFFF] dark:bg-[#1E1D1B] border-[#E7E5E0] dark:border-[#2D2C28] text-[#6B6860] dark:text-[#9E9B93] hover:text-[#1C1B19] dark:hover:text-[#EDEBE8]'
+              }`}
+            >
+              {w}×{h}
+            </button>
+          );
+        })}
       </div>
 
-      {/* Shrink Warning Modal / Banner */}
+      {/* Shrink Warning Alert */}
       {pendingResize && (
-        <div className="mt-3 p-3 bg-amber-950/40 border border-amber-600/50 rounded-lg text-amber-200 text-xs animate-in fade-in">
-          <div className="flex items-center gap-1.5 font-semibold text-amber-300 mb-1">
-            <AlertTriangle size={15} />
-            <span>Container Shrink Alert</span>
+        <div className="mt-2.5 p-2.5 bg-[#FAF4F3] dark:bg-[#251A18] border border-[#E5BCB8] dark:border-[#4D2723] rounded-[6px] text-[12px] text-[#8C2C24] dark:text-[#E88E87]">
+          <div className="flex items-center gap-1.5 font-medium text-[#C2453A] mb-1">
+            <AlertCircle size={14} strokeWidth={1.5} />
+            <span>Resize warning</span>
           </div>
-          <p className="mb-2 leading-relaxed text-amber-200/90">
-            Resizing to {pendingResize.width}×{pendingResize.height} leaves{' '}
-            <strong>{shrinkWarningShapes.length}</strong> placed shape(s) outside bounds.
+          <p className="mb-2 leading-snug">
+            {shrinkWarningShapes.length} shape{shrinkWarningShapes.length === 1 ? '' : 's'} will be
+            outside the {pendingResize.width}×{pendingResize.height} boundary.
           </p>
-          <div className="flex gap-2">
+          <div className="flex gap-1.5">
             <button
               onClick={() => confirmPendingResize(true)}
-              className="flex-1 bg-amber-600 hover:bg-amber-500 text-slate-950 font-medium py-1 px-2 rounded transition-colors"
+              className="flex-1 bg-[#C2453A] hover:bg-[#A8372D] text-white font-medium py-1 px-2 rounded-[4px] text-[11px] transition-colors"
             >
-              Remove Outside
+              Remove outside
             </button>
             <button
               onClick={cancelPendingResize}
-              className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 py-1 px-2 rounded transition-colors"
+              className="flex-1 bg-[#FFFFFF] dark:bg-[#1E1D1B] border border-[#E7E5E0] dark:border-[#2D2C28] text-[#6B6860] dark:text-[#9E9B93] hover:text-[#1C1B19] dark:hover:text-[#EDEBE8] py-1 px-2 rounded-[4px] text-[11px] transition-colors"
             >
               Cancel
             </button>

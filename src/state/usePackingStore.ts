@@ -65,6 +65,8 @@ export interface PackingState {
   computeProgress: number;
   stats: ComputeStats | null;
   winningStrategy: string | null;
+  toastMessage: string | null;
+  showToast: (msg: string) => void;
 
   // History (Undo / Redo)
   past: HistorySnapshot[];
@@ -125,7 +127,7 @@ const DEFAULT_TEMPLATES: ShapeTemplate[] = [
     name: 'Square',
     type: 'square',
     params: { size: 60 },
-    color: '#3b82f6',
+    color: '#D98C6A',
     enabled: true,
     weight: 1,
   },
@@ -134,7 +136,7 @@ const DEFAULT_TEMPLATES: ShapeTemplate[] = [
     name: 'Rectangle',
     type: 'rectangle',
     params: { width: 100, height: 50 },
-    color: '#10b981',
+    color: '#8FB39A',
     enabled: true,
     weight: 1,
   },
@@ -143,7 +145,7 @@ const DEFAULT_TEMPLATES: ShapeTemplate[] = [
     name: 'Circle',
     type: 'circle',
     params: { radius: 30 },
-    color: '#8b5cf6',
+    color: '#7C9CBF',
     enabled: true,
     weight: 1,
   },
@@ -152,7 +154,7 @@ const DEFAULT_TEMPLATES: ShapeTemplate[] = [
     name: 'Triangle',
     type: 'triangle',
     params: { base: 70, height: 60 },
-    color: '#f59e0b',
+    color: '#E0B65A',
     enabled: true,
     weight: 1,
   },
@@ -186,7 +188,7 @@ export const usePackingStore = create<PackingState>((set, get) => ({
   calcMode: 'mixed',
   selectedTemplateId: 'tpl-sq',
   unit: 'px',
-  theme: 'dark',
+  theme: 'light',
   gridSnap: false,
   gridSize: 10,
   overlays: {
@@ -209,9 +211,19 @@ export const usePackingStore = create<PackingState>((set, get) => ({
   computeProgress: 0,
   stats: null,
   winningStrategy: null,
+  toastMessage: null,
 
   past: [],
   future: [],
+
+  showToast: (msg: string) => {
+    set({ toastMessage: msg });
+    setTimeout(() => {
+      if (get().toastMessage === msg) {
+        set({ toastMessage: null });
+      }
+    }, 3200);
+  },
 
   setContainer: (dims) => {
     const current = get().container;
@@ -277,19 +289,19 @@ export const usePackingStore = create<PackingState>((set, get) => ({
 
     if (type === 'square') {
       params = { size: 50 };
-      color = '#3b82f6';
+      color = '#D98C6A';
       name = 'Square';
     } else if (type === 'rectangle') {
       params = { width: 80, height: 40 };
-      color = '#10b981';
+      color = '#8FB39A';
       name = 'Rectangle';
     } else if (type === 'circle') {
       params = { radius: 25 };
-      color = '#8b5cf6';
+      color = '#7C9CBF';
       name = 'Circle';
     } else if (type === 'triangle') {
       params = { base: 60, height: 50 };
-      color = '#f59e0b';
+      color = '#E0B65A';
       name = 'Triangle';
     }
 
@@ -492,6 +504,7 @@ export const usePackingStore = create<PackingState>((set, get) => ({
           isComputing: false,
           computeProgress: 100,
         });
+        get().showToast(`Placed ${allShapes.length} shapes · ${Math.round(result.stats.utilization)}% used`);
       } else {
         // Stream in progressive chunks
         let index = 0;
@@ -508,6 +521,7 @@ export const usePackingStore = create<PackingState>((set, get) => ({
               isComputing: false,
               computeProgress: 100,
             });
+            get().showToast(`Placed ${allShapes.length} shapes · ${Math.round(result.stats.utilization)}% used`);
           } else {
             set({
               placedShapes: currentBatch,
@@ -549,6 +563,7 @@ export const usePackingStore = create<PackingState>((set, get) => ({
         isComputing: false,
         computeProgress: 100,
       });
+      get().showToast(`Placed ${result.shapes.length} shapes · ${Math.round(result.stats.utilization)}% used`);
     } catch (err) {
       console.error(err);
       set({ isComputing: false });
@@ -576,6 +591,7 @@ export const usePackingStore = create<PackingState>((set, get) => ({
         winningStrategy: result.strategyName || null,
         isComputing: false,
       });
+      get().showToast(`Placed ${result.shapes.length} shapes · ${Math.round(result.stats.utilization)}% used`);
     } catch (err) {
       console.error(err);
       set({ isComputing: false });

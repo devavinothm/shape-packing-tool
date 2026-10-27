@@ -1,11 +1,12 @@
 import {
   Download,
-  FolderOpen,
-  Image,
+  FileCode,
+  Image as ImageIcon,
   Moon,
   Redo2,
   RotateCcw,
   Sun,
+  Trash2,
   Undo2,
   Upload,
 } from 'lucide-react';
@@ -34,6 +35,7 @@ export const Header: React.FC = () => {
     setTheme,
     resetToDefaults,
     clearPlacedShapes,
+    showToast,
   } = usePackingStore();
 
   const handleImportClick = () => {
@@ -55,6 +57,7 @@ export const Header: React.FC = () => {
           placedShapes: parsed.placedShapes,
           selectedIds: [],
         });
+        showToast('Layout imported successfully');
       } catch (err) {
         alert('Failed to parse layout file: ' + (err as Error).message);
       }
@@ -65,27 +68,23 @@ export const Header: React.FC = () => {
 
   const handleExportJSON = () => {
     exportLayoutToJSON(container, templates, placedShapes);
+    showToast('Exported layout to JSON');
   };
 
   const handleExportSVG = () => {
     const svg = document.getElementById('packing-canvas-svg') as SVGSVGElement | null;
-    if (!svg) {
-      alert('Canvas SVG not found');
-      return;
-    }
+    if (!svg) return;
     exportCanvasToSVG(svg, `shape-packing-${container.width}x${container.height}.svg`);
+    showToast('Exported canvas to SVG');
   };
 
   const handleExportPNG = () => {
     const svg = document.getElementById('packing-canvas-svg') as SVGSVGElement | null;
-    if (!svg) {
-      alert('Canvas SVG not found');
-      return;
-    }
+    if (!svg) return;
     exportCanvasToPNG(svg, container.width, container.height);
+    showToast('Exported canvas to PNG');
   };
 
-  // Preset demo layouts
   const loadPreset = (presetName: string) => {
     if (presetName === 'hex-circles') {
       usePackingStore.setState({
@@ -107,62 +106,70 @@ export const Header: React.FC = () => {
     }
   };
 
+  const isMac = typeof navigator !== 'undefined' && /Mac|iPod|iPhone|iPad/.test(navigator.userAgent);
+  const cmdKey = isMac ? '⌘' : 'Ctrl+';
+
   return (
-    <header className="h-14 border-b border-slate-700/60 bg-slate-900/90 backdrop-blur px-4 flex items-center justify-between select-none z-20 shrink-0 text-slate-200">
-      {/* Brand & Title */}
-      <div className="flex items-center gap-3">
-        <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center font-bold text-white shadow-md shadow-indigo-500/20">
-          SP
-        </div>
-        <div>
-          <h1 className="text-base font-semibold text-white tracking-tight leading-none m-0">
-            Shape Packing Tool
-          </h1>
-          <span className="text-xs text-slate-400">2D Container Fill Calculator</span>
-        </div>
+    <header className="h-12 border-b border-[#E7E5E0] dark:border-[#2D2C28] bg-[#FFFFFF] dark:bg-[#1E1D1B] px-4 flex items-center justify-between select-none z-20 shrink-0 text-[#1C1B19] dark:text-[#EDEBE8] transition-colors">
+      {/* Brand & Monogram Glyph */}
+      <div className="flex items-center gap-2.5">
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 20 20"
+          fill="none"
+          className="shrink-0 text-[#1F6F5C] dark:text-[#2B8570]"
+        >
+          <rect x="1" y="1" width="18" height="18" rx="3.5" stroke="currentColor" strokeWidth="1.5" />
+          <rect x="6.5" y="6.5" width="7" height="7" rx="1.5" fill="currentColor" />
+        </svg>
+        <span className="text-[13px] font-semibold tracking-[-0.01em] text-[#1C1B19] dark:text-[#EDEBE8]">
+          Shape Packing Tool
+        </span>
       </div>
 
       {/* Center Actions: Undo / Redo / History */}
-      <div className="flex items-center gap-1 bg-slate-800/80 p-1 rounded-lg border border-slate-700/50">
+      <div className="flex items-center gap-0.5 border border-[#E7E5E0] dark:border-[#2D2C28] rounded-[6px] p-0.5 bg-[#FAFAF8] dark:bg-[#181716]">
         <button
           onClick={undo}
           disabled={past.length === 0}
-          title="Undo (Ctrl/Cmd+Z)"
-          className="p-1.5 rounded hover:bg-slate-700 disabled:opacity-40 disabled:hover:bg-transparent text-slate-300 transition-colors"
+          title={`Undo (${cmdKey}Z)`}
+          className="p-1.5 rounded-[4px] hover:bg-[#FFFFFF] dark:hover:bg-[#21201D] text-[#6B6860] dark:text-[#9E9B93] hover:text-[#1C1B19] dark:hover:text-[#EDEBE8] disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
         >
-          <Undo2 size={16} />
+          <Undo2 size={15} strokeWidth={1.5} />
         </button>
         <button
           onClick={redo}
           disabled={future.length === 0}
-          title="Redo (Ctrl/Cmd+Shift+Z)"
-          className="p-1.5 rounded hover:bg-slate-700 disabled:opacity-40 disabled:hover:bg-transparent text-slate-300 transition-colors"
+          title={`Redo (${cmdKey}Shift+Z)`}
+          className="p-1.5 rounded-[4px] hover:bg-[#FFFFFF] dark:hover:bg-[#21201D] text-[#6B6860] dark:text-[#9E9B93] hover:text-[#1C1B19] dark:hover:text-[#EDEBE8] disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
         >
-          <Redo2 size={16} />
+          <Redo2 size={15} strokeWidth={1.5} />
         </button>
-        <div className="w-px h-4 bg-slate-700 mx-1" />
+        <div className="w-px h-3.5 bg-[#E7E5E0] dark:bg-[#2D2C28] mx-0.5" />
         <button
           onClick={clearPlacedShapes}
           disabled={placedShapes.length === 0}
-          title="Clear placed shapes"
-          className="px-2 py-1 text-xs rounded hover:bg-slate-700 text-slate-300 disabled:opacity-40"
+          title="Clear shapes from canvas"
+          className="px-2 py-1 text-[12px] rounded-[4px] text-[#6B6860] dark:text-[#9E9B93] hover:text-[#C2453A] hover:bg-[#FFFFFF] dark:hover:bg-[#21201D] disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-[#6B6860] transition-colors"
         >
-          Clear Shapes
+          <Trash2 size={13} strokeWidth={1.5} className="inline mr-1" />
+          Clear
         </button>
         <button
           onClick={resetToDefaults}
-          title="Reset to default container and shapes"
-          className="p-1.5 rounded hover:bg-slate-700 text-slate-400 hover:text-slate-200 transition-colors"
+          title="Reset to defaults"
+          className="p-1.5 rounded-[4px] hover:bg-[#FFFFFF] dark:hover:bg-[#21201D] text-[#6B6860] dark:text-[#9E9B93] hover:text-[#1C1B19] dark:hover:text-[#EDEBE8] transition-colors"
         >
-          <RotateCcw size={15} />
+          <RotateCcw size={14} strokeWidth={1.5} />
         </button>
       </div>
 
-      {/* Right Controls: Presets, Units, Import/Export, Theme */}
+      {/* Right Controls: Examples, Units, Export/Import, Theme */}
       <div className="flex items-center gap-2">
-        {/* Presets dropdown */}
+        {/* Examples dropdown per Section 5 copy */}
         <select
-          aria-label="Preset Layouts"
+          aria-label="Examples"
           onChange={(e) => {
             if (e.target.value) {
               loadPreset(e.target.value);
@@ -170,40 +177,40 @@ export const Header: React.FC = () => {
             }
           }}
           defaultValue=""
-          className="text-xs bg-slate-800 border border-slate-700 text-slate-300 rounded px-2 py-1.5 focus:outline-none focus:border-indigo-500 cursor-pointer"
+          className="text-[12px] bg-[#FFFFFF] dark:bg-[#1E1D1B] border border-[#E7E5E0] dark:border-[#2D2C28] text-[#1C1B19] dark:text-[#EDEBE8] rounded-[6px] px-2.5 py-1 focus:outline-none focus:border-[#1F6F5C] dark:focus:border-[#2B8570] cursor-pointer"
         >
           <option value="" disabled>
-            ⚡ Demo Presets
+            Examples
           </option>
-          <option value="hex-circles">Hexagonal Circle Array</option>
-          <option value="tri-tiles">Interlocking Triangles</option>
-          <option value="mixed-box">Mixed Shapes (Smart Fill)</option>
+          <option value="hex-circles">Circles (hexagonal)</option>
+          <option value="tri-tiles">Triangles (interlocking)</option>
+          <option value="mixed-box">Mixed shapes (best fit)</option>
         </select>
 
-        {/* Units Dropdown */}
-        <div className="flex items-center text-xs text-slate-400 bg-slate-800 border border-slate-700 rounded px-2 py-1">
-          <span className="mr-1.5 font-medium">Unit:</span>
+        {/* Units Selector */}
+        <div className="flex items-center text-[12px] bg-[#FFFFFF] dark:bg-[#1E1D1B] border border-[#E7E5E0] dark:border-[#2D2C28] rounded-[6px] px-2 py-1">
+          <span className="text-[#6B6860] dark:text-[#9E9B93] mr-1.5">Unit</span>
           <select
             value={unit}
             aria-label="Measurement Unit"
             onChange={(e) => setUnit(e.target.value as UnitType)}
-            className="bg-transparent text-slate-200 font-semibold focus:outline-none cursor-pointer"
+            className="bg-transparent text-[#1C1B19] dark:text-[#EDEBE8] font-mono focus:outline-none cursor-pointer"
           >
-            <option value="px" className="bg-slate-800 text-slate-200">px</option>
-            <option value="mm" className="bg-slate-800 text-slate-200">mm</option>
-            <option value="cm" className="bg-slate-800 text-slate-200">cm</option>
-            <option value="in" className="bg-slate-800 text-slate-200">in</option>
+            <option value="px">px</option>
+            <option value="mm">mm</option>
+            <option value="cm">cm</option>
+            <option value="in">in</option>
           </select>
         </div>
 
-        {/* Export / Import */}
-        <div className="flex items-center bg-slate-800 border border-slate-700 rounded p-0.5">
+        {/* Export / Import group */}
+        <div className="flex items-center border border-[#E7E5E0] dark:border-[#2D2C28] rounded-[6px] p-0.5 bg-[#FFFFFF] dark:bg-[#1E1D1B]">
           <button
             onClick={handleImportClick}
-            title="Import layout from JSON"
-            className="p-1.5 rounded hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
+            title="Import layout (JSON)"
+            className="p-1.5 rounded-[4px] hover:bg-[#FAFAF8] dark:hover:bg-[#282724] text-[#6B6860] dark:text-[#9E9B93] hover:text-[#1C1B19] dark:hover:text-[#EDEBE8] transition-colors"
           >
-            <Upload size={15} />
+            <Upload size={14} strokeWidth={1.5} />
           </button>
           <input
             type="file"
@@ -216,35 +223,35 @@ export const Header: React.FC = () => {
           <button
             onClick={handleExportJSON}
             title="Export layout as JSON"
-            className="p-1.5 rounded hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
+            className="p-1.5 rounded-[4px] hover:bg-[#FAFAF8] dark:hover:bg-[#282724] text-[#6B6860] dark:text-[#9E9B93] hover:text-[#1C1B19] dark:hover:text-[#EDEBE8] transition-colors"
           >
-            <Download size={15} />
+            <Download size={14} strokeWidth={1.5} />
           </button>
 
           <button
             onClick={handleExportSVG}
-            title="Export as SVG"
-            className="p-1.5 rounded hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
+            title="Export vector (SVG)"
+            className="p-1.5 rounded-[4px] hover:bg-[#FAFAF8] dark:hover:bg-[#282724] text-[#6B6860] dark:text-[#9E9B93] hover:text-[#1C1B19] dark:hover:text-[#EDEBE8] transition-colors"
           >
-            <FolderOpen size={15} />
+            <FileCode size={14} strokeWidth={1.5} />
           </button>
 
           <button
             onClick={handleExportPNG}
-            title="Export as PNG"
-            className="p-1.5 rounded hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
+            title="Export image (PNG)"
+            className="p-1.5 rounded-[4px] hover:bg-[#FAFAF8] dark:hover:bg-[#282724] text-[#6B6860] dark:text-[#9E9B93] hover:text-[#1C1B19] dark:hover:text-[#EDEBE8] transition-colors"
           >
-            <Image size={15} />
+            <ImageIcon size={14} strokeWidth={1.5} />
           </button>
         </div>
 
         {/* Theme Toggle */}
         <button
           onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-          title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} mode`}
-          className="p-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors"
+          title={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
+          className="p-1.5 rounded-[6px] border border-[#E7E5E0] dark:border-[#2D2C28] bg-[#FFFFFF] dark:bg-[#1E1D1B] text-[#6B6860] dark:text-[#9E9B93] hover:text-[#1C1B19] dark:hover:text-[#EDEBE8] transition-colors"
         >
-          {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+          {theme === 'dark' ? <Sun size={15} strokeWidth={1.5} /> : <Moon size={15} strokeWidth={1.5} />}
         </button>
       </div>
     </header>
