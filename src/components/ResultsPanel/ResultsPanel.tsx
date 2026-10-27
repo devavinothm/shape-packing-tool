@@ -1,13 +1,9 @@
 import {
   AlertCircle,
-  BarChart2,
-  CheckCircle2,
+  Check,
   ChevronDown,
   ChevronUp,
-  Dices,
-  Play,
   RotateCw,
-  Sparkles,
   StopCircle,
 } from 'lucide-react';
 import React, { useState } from 'react';
@@ -63,78 +59,77 @@ export const ResultsPanel: React.FC = () => {
   };
 
   return (
-    <aside className="w-80 h-full border-l border-slate-700/60 bg-slate-900/90 backdrop-blur flex flex-col shrink-0 select-none overflow-y-auto">
-      {/* Panel Title */}
-      <div className="p-4 border-b border-slate-700/60 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <BarChart2 size={16} className="text-indigo-400" />
-          <h2 className="text-xs font-bold uppercase tracking-wider text-slate-300 m-0">
-            Calculation & Results
-          </h2>
-        </div>
+    <aside className="w-72 h-full border-l border-[#E7E5E0] dark:border-[#2D2C28] bg-[#FFFFFF] dark:bg-[#1E1D1B] flex flex-col shrink-0 select-none overflow-y-auto transition-colors">
+      {/* Panel Header */}
+      <div className="p-3.5 border-b border-[#E7E5E0] dark:border-[#2D2C28] flex items-center justify-between">
+        <h3 className="text-[13px] font-semibold text-[#1C1B19] dark:text-[#EDEBE8] m-0">
+          Results
+        </h3>
         {validation.isValid ? (
-          <span className="flex items-center gap-1 text-[11px] text-emerald-400 bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-800/40">
-            <CheckCircle2 size={12} /> Valid Layout
+          <span className="flex items-center gap-1 text-[11px] text-[#6B6860] dark:text-[#9E9B93]">
+            <Check size={13} strokeWidth={2} className="text-[#1F6F5C] dark:text-[#2B8570]" />
+            <span>No overlaps</span>
           </span>
         ) : (
-          <span className="flex items-center gap-1 text-[11px] text-rose-400 bg-rose-950/40 px-2 py-0.5 rounded border border-rose-800/40">
-            <AlertCircle size={12} /> Invalid
+          <span className="flex items-center gap-1 text-[11px] text-[#C2453A] font-medium">
+            <AlertCircle size={13} strokeWidth={1.5} />
+            <span>Overlap detected</span>
           </span>
         )}
       </div>
 
-      <div className="p-4 space-y-4 flex-1">
+      <div className="p-3.5 space-y-4 flex-1">
         {/* Mode Selector */}
         <div>
-          <label className="block text-[11px] font-medium text-slate-400 mb-1.5">
-            Calculation Mode
+          <label className="block text-[11px] text-[#6B6860] dark:text-[#9E9B93] mb-1">
+            Fill mode
           </label>
-          <div className="grid grid-cols-3 gap-1 bg-slate-800/80 p-1 rounded-lg border border-slate-700/60 text-xs">
+          <div className="grid grid-cols-3 gap-1 bg-[#FAFAF8] dark:bg-[#151413] p-0.5 rounded-[6px] border border-[#E7E5E0] dark:border-[#2D2C28] text-[12px]">
             <button
               onClick={() => setCalcMode('mixed')}
-              className={`py-1 rounded font-medium transition-colors ${
+              className={`py-1 rounded-[4px] font-medium transition-colors ${
                 calcMode === 'mixed'
-                  ? 'bg-indigo-600 text-white shadow-sm'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-[#FFFFFF] dark:bg-[#282724] text-[#1C1B19] dark:text-[#EDEBE8] shadow-xs'
+                  : 'text-[#6B6860] dark:text-[#9E9B93] hover:text-[#1C1B19] dark:hover:text-[#EDEBE8]'
               }`}
             >
-              Mixed Fill
+              Mixed
             </button>
             <button
               onClick={() => setCalcMode('single')}
-              className={`py-1 rounded font-medium transition-colors ${
+              className={`py-1 rounded-[4px] font-medium transition-colors ${
                 calcMode === 'single'
-                  ? 'bg-indigo-600 text-white shadow-sm'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-[#FFFFFF] dark:bg-[#282724] text-[#1C1B19] dark:text-[#EDEBE8] shadow-xs'
+                  : 'text-[#6B6860] dark:text-[#9E9B93] hover:text-[#1C1B19] dark:hover:text-[#EDEBE8]'
               }`}
             >
-              Single Max
+              Single max
             </button>
             <button
               onClick={() => setCalcMode('current')}
-              className={`py-1 rounded font-medium transition-colors ${
+              className={`py-1 rounded-[4px] font-medium transition-colors ${
                 calcMode === 'current'
-                  ? 'bg-indigo-600 text-white shadow-sm'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-[#FFFFFF] dark:bg-[#282724] text-[#1C1B19] dark:text-[#EDEBE8] shadow-xs'
+                  : 'text-[#6B6860] dark:text-[#9E9B93] hover:text-[#1C1B19] dark:hover:text-[#EDEBE8]'
               }`}
             >
-              Live Count
+              Live
             </button>
           </div>
         </div>
 
         {/* Action Buttons based on Mode */}
         {calcMode === 'single' && (
-          <div className="space-y-3 p-3 bg-slate-800/50 rounded-lg border border-slate-700/50">
+          <div className="space-y-2 p-2.5 bg-[#FAFAF8] dark:bg-[#181716] rounded-[6px] border border-[#E7E5E0] dark:border-[#2D2C28]">
             <div>
-              <label className="block text-[11px] font-medium text-slate-400 mb-1">
-                Select Shape Template
+              <label className="block text-[11px] text-[#6B6860] dark:text-[#9E9B93] mb-1">
+                Template
               </label>
               <select
-                aria-label="Select Shape Template for Single Max"
+                aria-label="Select shape template"
                 value={selectedTemplateId || templates[0]?.id}
                 onChange={(e) => setSelectedTemplateId(e.target.value)}
-                className="w-full bg-slate-900 border border-slate-700 rounded px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+                className="w-full bg-[#FFFFFF] dark:bg-[#1E1D1B] border border-[#E7E5E0] dark:border-[#2D2C28] rounded-[6px] px-2 py-1 text-[12px] text-[#1C1B19] dark:text-[#EDEBE8] focus:outline-none focus:border-[#1F6F5C] dark:focus:border-[#2B8570]"
               >
                 {templates.map((t) => (
                   <option key={t.id} value={t.id}>
@@ -147,252 +142,220 @@ export const ResultsPanel: React.FC = () => {
             <button
               onClick={runSingleMax}
               disabled={isComputing || templates.length === 0}
-              className="w-full bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white font-medium text-xs py-2 px-3 rounded flex items-center justify-center gap-1.5 shadow-md shadow-indigo-600/20 transition-colors"
+              className="w-full h-9 bg-[#1F6F5C] hover:bg-[#185849] dark:bg-[#2B8570] dark:hover:bg-[#226B5A] disabled:opacity-50 text-white font-medium text-[12px] rounded-[6px] flex items-center justify-center transition-colors"
             >
-              <Play size={14} />
-              <span>Compute Single Shape Max</span>
+              Compute maximum fit
             </button>
           </div>
         )}
 
         {calcMode === 'mixed' && (
           <div className="space-y-2">
-            {/* Random Fill Button */}
+            {/* Primary Button: Random Fill (solid accent, 36px tall, no gradient) */}
             <button
               onClick={handleRandomFillClick}
               disabled={isComputing || enabledTemplates.length === 0}
-              className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 disabled:opacity-50 text-white font-semibold text-xs py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20 transition-all active:scale-[0.99]"
+              className="w-full h-9 bg-[#1F6F5C] hover:bg-[#185849] dark:bg-[#2B8570] dark:hover:bg-[#226B5A] disabled:opacity-50 text-white font-medium text-[13px] rounded-[6px] flex items-center justify-center transition-colors"
             >
-              <Dices size={16} />
-              <span>Random Fill (One-Click)</span>
+              Random fill
             </button>
 
-            {/* Smart Fill Button */}
+            {/* Secondary Button: Best Fit (hairline border, white background) */}
             <button
               onClick={handleSmartFillClick}
               disabled={isComputing || enabledTemplates.length === 0}
-              className="w-full bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-slate-600 disabled:opacity-50 text-slate-200 font-medium text-xs py-2 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors"
+              title="Tries several layouts and keeps the best one"
+              className="w-full h-9 bg-[#FFFFFF] dark:bg-[#1E1D1B] hover:bg-[#FAFAF8] dark:hover:bg-[#282724] border border-[#E7E5E0] dark:border-[#2D2C28] disabled:opacity-50 text-[#1C1B19] dark:text-[#EDEBE8] font-medium text-[13px] rounded-[6px] flex items-center justify-center transition-colors"
             >
-              <Sparkles size={15} className="text-amber-400" />
-              <span>Smart Fill (Heuristic)</span>
+              Best fit
             </button>
           </div>
         )}
 
         {/* Progress Bar / Cancel */}
         {isComputing && (
-          <div className="p-3 bg-indigo-950/40 border border-indigo-700/50 rounded-lg">
-            <div className="flex items-center justify-between text-xs text-indigo-200 mb-1.5">
+          <div className="p-2.5 bg-[#FAFAF8] dark:bg-[#181716] border border-[#E7E5E0] dark:border-[#2D2C28] rounded-[6px]">
+            <div className="flex items-center justify-between text-[11px] text-[#6B6860] dark:text-[#9E9B93] mb-1.5">
               <span className="flex items-center gap-1.5">
-                <RotateCw size={13} className="animate-spin text-indigo-400" />
-                Computing Packing...
+                <RotateCw size={12} strokeWidth={1.5} className="animate-spin text-[#1F6F5C] dark:text-[#2B8570]" />
+                Computing...
               </span>
               <button
                 onClick={cancelCompute}
-                className="text-rose-400 hover:text-rose-300 flex items-center gap-1"
+                className="text-[#C2453A] hover:text-[#A8372D] flex items-center gap-0.5"
               >
-                <StopCircle size={13} /> Cancel
+                <StopCircle size={12} strokeWidth={1.5} /> Cancel
               </button>
             </div>
-            <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+            <div className="w-full bg-[#E7E5E0] dark:bg-[#2D2C28] h-1 rounded-full overflow-hidden">
               <div
-                className="bg-indigo-500 h-full transition-all duration-150"
+                className="bg-[#1F6F5C] dark:bg-[#2B8570] h-full transition-all duration-150"
                 style={{ width: `${computeProgress || 30}%` }}
               />
             </div>
           </div>
         )}
 
-        {/* Collapsible Advanced Random Fill Settings */}
+        {/* Collapsible Fill Options */}
         {calcMode === 'mixed' && (
-          <div className="border border-slate-700/50 rounded-lg bg-slate-800/30 overflow-hidden text-xs">
+          <div className="border border-[#E7E5E0] dark:border-[#2D2C28] rounded-[6px] bg-[#FFFFFF] dark:bg-[#1E1D1B] overflow-hidden text-[12px]">
             <button
               onClick={() => setShowAdvanced(!showAdvanced)}
-              className="w-full px-3 py-2 flex items-center justify-between text-slate-400 hover:text-slate-200 hover:bg-slate-800/60"
+              className="w-full px-2.5 py-1.5 flex items-center justify-between text-[#6B6860] dark:text-[#9E9B93] hover:text-[#1C1B19] dark:hover:text-[#EDEBE8]"
             >
-              <span>Advanced Fill Settings</span>
-              {showAdvanced ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+              <span>Fill options</span>
+              {showAdvanced ? <ChevronUp size={13} strokeWidth={1.5} /> : <ChevronDown size={13} strokeWidth={1.5} />}
             </button>
 
             {showAdvanced && (
-              <div className="p-3 pt-1 border-t border-slate-700/40 space-y-2.5">
+              <div className="p-2.5 pt-1 border-t border-[#E7E5E0] dark:border-[#2D2C28] space-y-2">
                 {/* Seed & Reroll */}
                 <div>
-                  <div className="flex justify-between text-[11px] text-slate-400 mb-1">
+                  <div className="flex justify-between text-[11px] text-[#6B6860] dark:text-[#9E9B93] mb-0.5">
                     <span>Seed</span>
                     <button
                       onClick={rerollSeed}
-                      className="text-indigo-400 hover:text-indigo-300 flex items-center gap-0.5"
+                      className="text-[#1F6F5C] dark:text-[#2B8570] hover:underline flex items-center gap-0.5"
                     >
-                      <RotateCw size={11} /> Re-roll
+                      <RotateCw size={10} strokeWidth={1.5} /> Re-roll
                     </button>
                   </div>
                   <input
                     type="number"
                     value={rfSettings.seed}
                     onChange={(e) => setRfSettings({ seed: Number(e.target.value) })}
-                    className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-slate-200 font-mono text-xs"
-                  />
-                </div>
-
-                {/* Max attempts */}
-                <div>
-                  <label className="block text-[11px] text-slate-400 mb-1">Max Attempts</label>
-                  <input
-                    type="number"
-                    value={rfSettings.maxAttempts}
-                    onChange={(e) => setRfSettings({ maxAttempts: Number(e.target.value) })}
-                    className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-slate-200 font-mono text-xs"
-                  />
-                </div>
-
-                {/* Failure threshold */}
-                <div>
-                  <label className="block text-[11px] text-slate-400 mb-1">
-                    Failure Threshold (Stop limit)
-                  </label>
-                  <input
-                    type="number"
-                    value={rfSettings.failureThreshold}
-                    onChange={(e) => setRfSettings({ failureThreshold: Number(e.target.value) })}
-                    className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-slate-200 font-mono text-xs"
+                    className="w-full bg-[#FFFFFF] dark:bg-[#1E1D1B] border border-[#E7E5E0] dark:border-[#2D2C28] rounded-[6px] px-2 py-0.5 text-[#1C1B19] dark:text-[#EDEBE8] font-mono tabular-nums text-[12px] focus:outline-none focus:border-[#1F6F5C]"
                   />
                 </div>
 
                 {/* Keep existing */}
-                <label className="flex items-center gap-2 cursor-pointer text-slate-300">
+                <label className="flex items-center gap-2 cursor-pointer text-[#6B6860] dark:text-[#9E9B93] text-[11px]">
                   <input
                     type="checkbox"
                     checked={rfSettings.keepExisting}
                     onChange={(e) => setRfSettings({ keepExisting: e.target.checked })}
-                    className="accent-indigo-500 rounded"
+                    className="accent-[#1F6F5C] dark:accent-[#2B8570] rounded"
                   />
                   <span>Keep existing shapes</span>
                 </label>
 
                 {/* Fill gaps only */}
-                <label className="flex items-center gap-2 cursor-pointer text-slate-300">
+                <label className="flex items-center gap-2 cursor-pointer text-[#6B6860] dark:text-[#9E9B93] text-[11px]">
                   <input
                     type="checkbox"
                     checked={rfSettings.fillGaps}
                     onChange={(e) => setRfSettings({ fillGaps: e.target.checked })}
-                    className="accent-indigo-500 rounded"
+                    className="accent-[#1F6F5C] dark:accent-[#2B8570] rounded"
                   />
-                  <span>Fine-grid gap fill pass</span>
+                  <span>Micro-grid gap fill pass</span>
                 </label>
               </div>
             )}
           </div>
         )}
 
-        {/* Live / Computed Results Cards */}
-        <div className="space-y-3 pt-1">
-          {/* Total Shape Count Card */}
-          <div className="p-3 bg-slate-800/60 border border-slate-700/60 rounded-lg">
-            <div className="text-[11px] font-medium text-slate-400 uppercase tracking-wider mb-1">
-              Total Placed Count
+        {/* Plain stats sections without boxed cards per Section 4 & 6 */}
+        <div className="space-y-3.5 pt-1">
+          {/* Shapes Placed */}
+          <div>
+            <div className="text-[11px] text-[#6B6860] dark:text-[#9E9B93] mb-0.5">
+              Shapes placed
             </div>
-            <div className="flex items-baseline justify-between">
-              <span className="text-3xl font-extrabold text-white font-mono">
-                {liveStats.totalCount}
-              </span>
-              <span className="text-xs text-slate-400">shapes</span>
+            <div className="text-[28px] font-medium text-[#1C1B19] dark:text-[#EDEBE8] font-mono tabular-nums leading-none">
+              {liveStats.totalCount}
             </div>
           </div>
 
-          {/* Area Utilization Card */}
-          <div className="p-3 bg-slate-800/60 border border-slate-700/60 rounded-lg space-y-2">
-            <div className="flex justify-between text-[11px] font-medium text-slate-400 uppercase tracking-wider">
-              <span>Area Utilization</span>
-              <span className="text-slate-200 font-mono font-bold">
+          {/* Space Used */}
+          <div>
+            <div className="flex justify-between text-[11px] text-[#6B6860] dark:text-[#9E9B93] mb-1">
+              <span>Space used</span>
+              <span className="font-mono tabular-nums text-[#1C1B19] dark:text-[#EDEBE8]">
                 {liveStats.utilization.toFixed(1)}%
               </span>
             </div>
-            {/* Progress meter */}
-            <div className="w-full bg-slate-700/60 h-2 rounded-full overflow-hidden">
+            <div className="w-full bg-[#E7E5E0] dark:bg-[#2D2C28] h-1.5 rounded-full overflow-hidden">
               <div
-                className={`h-full transition-all duration-300 ${
-                  liveStats.utilization > 80
-                    ? 'bg-emerald-500'
-                    : liveStats.utilization > 50
-                    ? 'bg-indigo-500'
-                    : 'bg-amber-500'
-                }`}
+                className="h-full bg-[#1F6F5C] dark:bg-[#2B8570] transition-all duration-200"
                 style={{ width: `${Math.min(100, liveStats.utilization)}%` }}
               />
             </div>
-            <div className="flex justify-between text-[10px] text-slate-400 font-mono">
-              <span>Used: {Math.round(liveStats.usedArea)} {unit}²</span>
-              <span>Total: {container.width * container.height} {unit}²</span>
+            <div className="flex justify-between text-[10px] text-[#9E9B93] dark:text-[#6B6860] font-mono tabular-nums mt-1">
+              <span>{Math.round(liveStats.usedArea)} {unit}² used</span>
+              <span>{container.width * container.height} {unit}² box</span>
             </div>
           </div>
 
-          {/* Count Per Shape Type */}
-          <div className="p-3 bg-slate-800/60 border border-slate-700/60 rounded-lg space-y-2">
-            <div className="text-[11px] font-medium text-slate-400 uppercase tracking-wider">
-              Count Per Template
+          <div className="border-t border-[#E7E5E0] dark:border-[#2D2C28]" />
+
+          {/* Breakdown per shape */}
+          <div>
+            <div className="text-[11px] text-[#6B6860] dark:text-[#9E9B93] mb-1.5">
+              Breakdown
             </div>
-            <div className="space-y-1.5">
+            <div className="space-y-1">
               {templates.map((tpl) => {
                 const count = liveStats.countPerTemplate[tpl.id] || 0;
                 return (
                   <div
                     key={tpl.id}
-                    className="flex items-center justify-between text-xs py-0.5 border-b border-slate-800/80 last:border-0"
+                    className="flex items-center justify-between text-[12px] py-0.5"
                   >
-                    <div className="flex items-center gap-2 truncate">
+                    <div className="flex items-center gap-1.5 truncate">
                       <span
-                        className="w-2.5 h-2.5 rounded-full shrink-0"
+                        className="w-2 h-2 rounded-full shrink-0"
                         style={{ backgroundColor: tpl.color }}
                       />
-                      <span className="text-slate-300 truncate">{tpl.name || tpl.type}</span>
+                      <span className="text-[#6B6860] dark:text-[#9E9B93] truncate">
+                        {tpl.name || tpl.type}
+                      </span>
                     </div>
-                    <span className="font-mono text-slate-200 font-semibold">{count}</span>
+                    <span className="font-mono tabular-nums text-[#1C1B19] dark:text-[#EDEBE8]">
+                      {count}
+                    </span>
                   </div>
                 );
               })}
             </div>
           </div>
 
-          {/* Winning Strategy / Algorithm Metadata */}
-          <div className="p-3 bg-slate-800/30 border border-slate-700/40 rounded-lg text-xs space-y-1 text-slate-400">
-            <div>
-              <span className="text-slate-500">Algorithm: </span>
-              <span className="text-slate-300 font-medium">
-                {winningStrategy || liveStats.algorithm}
-              </span>
-            </div>
-            {stats && (
-              <>
+          {/* Algorithm Info: ONLY display if a calculation has actually run! */}
+          {stats && (
+            <div className="border-t border-[#E7E5E0] dark:border-[#2D2C28] pt-2 text-[11px] text-[#9E9B93] dark:text-[#6B6860] space-y-0.5">
+              <div>
+                <span>Method: </span>
+                <span className="text-[#6B6860] dark:text-[#9E9B93]">
+                  {winningStrategy || stats.algorithm}
+                </span>
+              </div>
+              <div>
+                <span>Time: </span>
+                <span className="font-mono tabular-nums text-[#6B6860] dark:text-[#9E9B93]">
+                  {stats.computeTimeMs} ms
+                </span>
+              </div>
+              {stats.seed !== undefined && (
                 <div>
-                  <span className="text-slate-500">Compute Time: </span>
-                  <span className="text-slate-300 font-mono">{stats.computeTimeMs} ms</span>
+                  <span>Seed: </span>
+                  <span className="font-mono tabular-nums text-[#6B6860] dark:text-[#9E9B93]">
+                    {stats.seed}
+                  </span>
                 </div>
-                {stats.seed !== undefined && (
-                  <div>
-                    <span className="text-slate-500">Seed: </span>
-                    <span className="text-slate-300 font-mono">{stats.seed}</span>
-                  </div>
-                )}
-              </>
-            )}
-          </div>
+              )}
+            </div>
+          )}
 
-          {/* Diagnostic Warnings */}
+          {/* Diagnostics Alert if invalid */}
           {!validation.isValid && (
-            <div className="p-3 bg-rose-950/40 border border-rose-600/50 rounded-lg text-xs text-rose-200 space-y-1">
-              <div className="font-semibold flex items-center gap-1.5 text-rose-300">
-                <AlertCircle size={14} /> Layout Diagnostics
+            <div className="p-2 bg-[#FAF4F3] dark:bg-[#251A18] border border-[#E5BCB8] dark:border-[#4D2723] rounded-[6px] text-[11px] text-[#8C2C24] dark:text-[#E88E87] space-y-0.5">
+              <div className="font-medium text-[#C2453A] flex items-center gap-1">
+                <AlertCircle size={12} strokeWidth={1.5} /> Issue detected
               </div>
               {validation.overflows.length > 0 && (
-                <p>
-                  <strong>{validation.overflows.length}</strong> shape(s) crossing container edges.
-                </p>
+                <div>{validation.overflows.length} shape(s) outside border</div>
               )}
               {validation.overlaps.length > 0 && (
-                <p>
-                  <strong>{validation.overlaps.length}</strong> overlapping shape pair(s).
-                </p>
+                <div>{validation.overlaps.length} overlapping pair(s)</div>
               )}
             </div>
           )}

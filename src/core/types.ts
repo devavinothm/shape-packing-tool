@@ -64,4 +64,7 @@ export interface ComputeStats {
   algorithm: string;
   computeTimeMs: number;
   seed?: number | string;
+  remainingArea?: number;
+  estMoreCanFit?: number;
+  estTotalCapacity?: number;
 }

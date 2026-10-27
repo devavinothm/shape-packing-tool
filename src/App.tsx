@@ -12,7 +12,11 @@ export const App: React.FC = () => {
   const [mobileDrawer, setMobileDrawer] = useState<'sidebar' | 'results' | null>(null);
 
   return (
-    <div className={`w-full h-full flex flex-col overflow-hidden ${theme === 'dark' ? 'dark bg-slate-950 text-slate-100' : 'bg-slate-100 text-slate-900'}`}>
+    <div
+      className={`w-full h-full flex flex-col overflow-hidden ${
+        theme === 'dark' ? 'dark bg-[#151413] text-[#EDEBE8]' : 'bg-[#FAFAF8] text-[#1C1B19]'
+      }`}
+    >
       {/* Top Header */}
       <Header />
 
@@ -20,8 +24,10 @@ export const App: React.FC = () => {
       <div className="flex-1 flex min-h-0 relative">
         {/* Left Sidebar: Container & Templates */}
         <aside
-          className={`w-72 h-full border-r border-slate-700/60 bg-slate-900/90 backdrop-blur flex flex-col shrink-0 z-10 transition-transform duration-200 md:translate-x-0 ${
-            mobileDrawer === 'sidebar' ? 'translate-x-0 absolute inset-y-0 left-0 shadow-2xl' : '-translate-x-full md:relative'
+          className={`w-[270px] h-full border-r border-[#E7E5E0] dark:border-[#2D2C28] bg-[#FFFFFF] dark:bg-[#1E1D1B] flex flex-col shrink-0 z-10 transition-transform duration-150 md:translate-x-0 ${
+            mobileDrawer === 'sidebar'
+              ? 'translate-x-0 absolute inset-y-0 left-0 shadow-lg'
+              : '-translate-x-full md:relative'
           }`}
         >
           <ContainerEditor />
@@ -32,27 +38,29 @@ export const App: React.FC = () => {
         <main className="flex-1 h-full relative flex flex-col min-w-0">
           <PackingCanvas />
 
-          {/* Mobile responsive toggle drawer buttons (< 900px) */}
-          <div className="md:hidden absolute top-4 right-4 flex items-center gap-2 z-20">
+          {/* Mobile responsive drawer toggles (< 900px) */}
+          <div className="md:hidden absolute top-3 right-3 flex items-center gap-1.5 z-20">
             <button
               onClick={() => setMobileDrawer(mobileDrawer === 'sidebar' ? null : 'sidebar')}
-              className="p-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-200 shadow-lg text-xs flex items-center gap-1"
+              className="px-2.5 py-1 rounded-[6px] bg-[#FFFFFF] dark:bg-[#1E1D1B] border border-[#E7E5E0] dark:border-[#2D2C28] text-[#1C1B19] dark:text-[#EDEBE8] shadow-xs text-[12px] flex items-center gap-1"
             >
-              <Layers size={14} /> Shapes
+              <Layers size={13} strokeWidth={1.5} /> Shapes
             </button>
             <button
               onClick={() => setMobileDrawer(mobileDrawer === 'results' ? null : 'results')}
-              className="p-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-200 shadow-lg text-xs flex items-center gap-1"
+              className="px-2.5 py-1 rounded-[6px] bg-[#FFFFFF] dark:bg-[#1E1D1B] border border-[#E7E5E0] dark:border-[#2D2C28] text-[#1C1B19] dark:text-[#EDEBE8] shadow-xs text-[12px] flex items-center gap-1"
             >
-              <BarChart2 size={14} /> Results
+              <BarChart2 size={13} strokeWidth={1.5} /> Results
             </button>
           </div>
         </main>
 
-        {/* Right Panel: Results & Calculation */}
+        {/* Right Panel: Results */}
         <div
-          className={`h-full z-10 transition-transform duration-200 lg:translate-x-0 ${
-            mobileDrawer === 'results' ? 'translate-x-0 absolute inset-y-0 right-0 shadow-2xl' : 'translate-x-full lg:relative'
+          className={`h-full z-10 transition-transform duration-150 lg:translate-x-0 ${
+            mobileDrawer === 'results'
+              ? 'translate-x-0 absolute inset-y-0 right-0 shadow-lg'
+              : 'translate-x-full lg:relative'
           }`}
         >
           <ResultsPanel />

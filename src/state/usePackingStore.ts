@@ -669,13 +669,29 @@ export const usePackingStore = create<PackingState>((set, get) => ({
     }
 
     const containerArea = state.container.width * state.container.height;
+    const remainingArea = Math.max(0, containerArea - usedArea);
     const utilization = containerArea > 0 ? (usedArea / containerArea) * 100 : 0;
+
+    const enabledTemplates = state.templates.filter((t) => t.enabled);
+    let avgArea = 0;
+    if (enabledTemplates.length > 0) {
+      let sumArea = 0;
+      for (const t of enabledTemplates) sumArea += getTemplateArea(t);
+      avgArea = sumArea / enabledTemplates.length;
+    }
+
+    // Realistic packing efficiency ~75% due to voids
+    const estMoreCanFit = avgArea > 0 ? Math.floor((remainingArea * 0.75) / avgArea) : 0;
+    const estTotalCapacity = state.placedShapes.length + estMoreCanFit;
 
     return {
       totalCount: state.placedShapes.length,
       countPerTemplate,
       containerArea,
       usedArea,
+      remainingArea,
+      estMoreCanFit,
+      estTotalCapacity,
       utilization,
       algorithm: state.stats?.algorithm || 'Current Placement',
       computeTimeMs: state.stats?.computeTimeMs || 0,
